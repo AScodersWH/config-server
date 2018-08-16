@@ -1,0 +1,76 @@
+version: "5"
+
+networks:
+  todo:
+
+services:
+  mysql:
+    image: coney/mysql:5
+    deploy:
+      replicas: 1
+      restart_policy:
+        delay: 10s
+    networks:
+      todo:
+        aliases:
+        - mysql
+    ports:
+    - "3306:3306"
+  config-server:
+    image: as895052253/config-server:${VER}
+    deploy:
+      replicas: 1
+      restart_policy:
+        delay: 10s
+    networks:
+      todo:
+        aliases:
+        - config-server
+    ports:
+    - "8989:8989"
+  zuul-service:
+    image: as895052253/zuul-service:${VER}
+    deploy:
+      replicas: 1
+      restart_policy:
+        delay: 10s
+    depends_on:
+    - config-server
+    networks:
+      todo:
+        aliases:
+        - zuul-service
+    ports:
+    - "8089:8089"
+  user-service:
+    image: as895052253/user-service:${VER}
+    deploy:
+      replicas: 2
+      restart_policy:
+        delay: 10s
+    depends_on:
+    - mysql
+    networks:
+      todo:
+        aliases:
+        - user-service
+    ports:
+    - "8082:8082"
+    environment:
+    - SPRING_PROFILES_ACTIVE=default
+  todo-service:
+    image: as895052253/todo-service:${VER}
+    deploy:
+      replicas: 2
+      restart_policy:
+        delay: 10s
+    depends_on:
+    - mysql
+    networks:
+      todo:
+        aliases:
+        - todo-service
+    ports:
+    - "8081:8081"
+    environment:
+    - SPRING_PROFILES_ACTIVE=default
