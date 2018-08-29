@@ -1,4 +1,4 @@
-version: "5"
+version: "3"
 
 networks:
   todo:
@@ -17,7 +17,7 @@ services:
     ports:
     - "3306:3306"
   config-server:
-    image: as895052253/config-server:${VER}
+    image: as895052253/config-server:1000
     deploy:
       replicas: 1
       restart_policy:
@@ -29,7 +29,7 @@ services:
     ports:
     - "8989:8989"
   zuul-service:
-    image: as895052253/zuul-service:${VER}
+    image: as895052253/zuul-service:999
     deploy:
       replicas: 1
       restart_policy:
@@ -43,9 +43,9 @@ services:
     ports:
     - "8089:8089"
   user-service:
-    image: as895052253/user-service:${VER}
+    image: as895052253/user-service:1000
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         delay: 10s
     depends_on:
@@ -59,9 +59,9 @@ services:
     environment:
     - SPRING_PROFILES_ACTIVE=default
   todo-service:
-    image: as895052253/todo-service:${VER}
+    image: as895052253/todo-service:999
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         delay: 10s
     depends_on:
@@ -74,3 +74,13 @@ services:
     - "8081:8081"
     environment:
     - SPRING_PROFILES_ACTIVE=default
+#  todo-list:
+#    image: as895052253/todo-list:${VER}
+#    depends_on:
+#    - todo-service
+#    networks:
+#      todo:
+#        aliases:
+#        - todo-list
+#    ports:
+#    - "3000:3000"
